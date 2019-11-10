@@ -16,14 +16,7 @@ export default class Controls extends Component {
 
   handleSubmitAdd = event => {
     event.preventDefault();
-
-    this.props.onAddTransaction({ ...this.state });
-  };
-
-  handleSubmitWith = event => {
-    event.preventDefault();
-
-    this.props.onWithdrawTransaction({ ...this.state });
+    this.props.onAddTransaction({ ...this.state }, event);
   };
 
   render() {
@@ -33,6 +26,7 @@ export default class Controls extends Component {
         <button
           className={styles.controls}
           type="submit"
+          name="deposit"
           onClick={this.handleSubmitAdd}
         >
           Deposit
@@ -40,7 +34,8 @@ export default class Controls extends Component {
         <button
           className={styles.controls}
           type="submit"
-          onClick={this.handleSubmitWith}
+          name="withdrawal"
+          onClick={this.handleSubmitAdd}
         >
           Withdraw
         </button>
@@ -51,5 +46,4 @@ export default class Controls extends Component {
 
 Controls.propTypes = {
   onAddTransaction: PropTypes.func.isRequired,
-  onWithdrawTransaction: PropTypes.func.isRequired,
 };

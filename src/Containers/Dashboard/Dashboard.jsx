@@ -20,74 +20,68 @@ export default class Dashboard extends Component {
   notifyNoCost = () =>
     toast('На счету недостаточно средств для проведения операции!');
 
-  onDeposit = trans => {
+  onAddTransaction = (trans, event) => {
     const transaction = {
       ...trans,
       id: uuidv4(),
-      type: 'Deposit',
+      type: event.target.name,
       date: new Date().toLocaleDateString(),
     };
     if (Number(trans.amount) <= 0) {
       this.notifyNoInputValue();
       return;
     }
-    this.setState(state => ({
-      transactions: [...state.transactions, transaction],
-      balance: Number(state.balance) + Number(trans.amount),
-    }));
-  };
-
-  onWithdraw = trans => {
-    const transaction = {
-      ...trans,
-      id: uuidv4(),
-      type: 'Withdrawal',
-      date: new Date().toLocaleDateString(),
-    };
-    if (Number(trans.amount) <= 0) {
-      this.notifyNoInputValue();
-      return;
+    if (event.target.name === 'withdrawal') {
+      if (this.state.balance < trans.amount) {
+        this.notifyNoCost();
+        return;
+      }
+      this.setState(state => ({
+        transactions: [...state.transactions, transaction],
+        balance: Number(state.balance) - Number(trans.amount),
+      }));
+    } else if (event.target.name === 'deposit') {
+      this.setState(state => ({
+        transactions: [...state.transactions, transaction],
+        balance: Number(state.balance) + Number(trans.amount),
+      }));
     }
-
-    if (this.state.balance < trans.amount) {
-      this.notifyNoCost();
-      return;
-    }
-    this.setState(state => ({
-      transactions: [...state.transactions, transaction],
-      balance: Number(state.balance) - Number(trans.amount),
-    }));
+    event.target.parentNode.reset();
   };
 
-  income = () => {
-    const incomeTrans = this.state.transactions.filter(
-      el => el.type === 'Deposit',
-    );
-    return incomeTrans.map(el => Number(el.amount)).reduce((a, b) => a + b, 0);
-  };
+  // income = () => {
+  //   const incomeTrans = this.state.transactions.filter(
+  //     el => el.type === 'deposit',
+  //   );
+  //   return incomeTrans.map(el => Number(el.amount)).reduce((a, b) => a + b, 0);
+  // };
 
-  expenses = () => {
-    const expensesTrans = this.state.transactions.filter(
-      el => el.type === 'Withdrawal',
-    );
-    return expensesTrans
-      .map(el => Number(el.amount))
-      .reduce((a, b) => a + b, 0);
+  // expenses = () => {
+  //   const expensesTrans = this.state.transactions.filter(
+  //     el => el.type === 'withdrawal',
+  //   );
+  //   return expensesTrans
+  //     .map(el => Number(el.amount))
+  //     .reduce((a, b) => a + b, 0);
+  // };
+
+  handleTotalAmount = type => {
+    const { transactions } = this.state;
+    const amount = transactions
+      .filter(transaction => transaction.type === type)
+      .reduce((acc, transaction) => {
+        return Number(transaction.amount) + Number(acc);
+      }, 0);
+
+    return amount;
   };
 
   render() {
     const { transactions, balance } = this.state;
     return (
       <div className={styles.DashboardWrapper}>
-        <Controls
-          onAddTransaction={this.onDeposit}
-          onWithdrawTransaction={this.onWithdraw}
-        />
-        <Balance
-          income={this.income}
-          expenses={this.expenses}
-          balance={balance}
-        />
+        <Controls onAddTransaction={this.onAddTransaction} />
+        <Balance handleTotalAmount={this.handleTotalAmount} balance={balance} />
         <TransactionHistory items={transactions} />
         <ToastContainer />
       </div>
