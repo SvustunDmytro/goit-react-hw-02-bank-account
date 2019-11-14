@@ -36,7 +36,7 @@ export default class Dashboard extends Component {
       type: event.target.name,
       date: date.toLocaleDateString('en-US', options),
     };
-    if (Number(trans.amount) <= 0) {
+    if (trans.amount <= 0) {
       this.notifyNoInputValue();
       return;
     }
@@ -47,12 +47,12 @@ export default class Dashboard extends Component {
       }
       this.setState(state => ({
         transactions: [...state.transactions, transaction],
-        balance: Number(state.balance) - Number(trans.amount),
+        balance: state.balance - trans.amount,
       }));
     } else if (event.target.name === 'deposit') {
       this.setState(state => ({
         transactions: [...state.transactions, transaction],
-        balance: Number(state.balance) + Number(trans.amount),
+        balance: state.balance + trans.amount,
       }));
     }
     event.target.parentNode.reset();
@@ -63,7 +63,7 @@ export default class Dashboard extends Component {
     const amount = transactions
       .filter(transaction => transaction.type === type)
       .reduce((acc, transaction) => {
-        return Number(transaction.amount) + Number(acc);
+        return transaction.amount + acc;
       }, 0);
 
     return amount;
