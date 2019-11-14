@@ -21,11 +21,20 @@ export default class Dashboard extends Component {
     toast('На счету недостаточно средств для проведения операции!');
 
   onAddTransaction = (trans, event) => {
+    const date = new Date();
+    const options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    };
     const transaction = {
       ...trans,
       id: uuidv4(),
       type: event.target.name,
-      date: new Date().toLocaleDateString(),
+      date: date.toLocaleDateString('en-US', options),
     };
     if (Number(trans.amount) <= 0) {
       this.notifyNoInputValue();
@@ -48,22 +57,6 @@ export default class Dashboard extends Component {
     }
     event.target.parentNode.reset();
   };
-
-  // income = () => {
-  //   const incomeTrans = this.state.transactions.filter(
-  //     el => el.type === 'deposit',
-  //   );
-  //   return incomeTrans.map(el => Number(el.amount)).reduce((a, b) => a + b, 0);
-  // };
-
-  // expenses = () => {
-  //   const expensesTrans = this.state.transactions.filter(
-  //     el => el.type === 'withdrawal',
-  //   );
-  //   return expensesTrans
-  //     .map(el => Number(el.amount))
-  //     .reduce((a, b) => a + b, 0);
-  // };
 
   handleTotalAmount = type => {
     const { transactions } = this.state;

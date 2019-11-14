@@ -17,6 +17,7 @@ export default class Controls extends Component {
   handleSubmitAdd = event => {
     event.preventDefault();
     this.props.onAddTransaction({ ...this.state }, event);
+    this.setState({ amount: 0 });
   };
 
   render() {
