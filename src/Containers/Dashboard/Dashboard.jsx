@@ -31,7 +31,7 @@ export default class Dashboard extends Component {
       second: 'numeric',
     };
     const transaction = {
-      ...trans,
+      amount: trans.amount,
       id: uuidv4(),
       type: event.target.name,
       date: date.toLocaleDateString('en-US', options),

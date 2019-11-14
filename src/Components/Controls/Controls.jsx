@@ -10,7 +10,7 @@ export default class Controls extends Component {
 
   handleChange = e => {
     this.setState({
-      [e.target.name]: e.target.value,
+      [e.target.name]: Number(e.target.value),
     });
   };
 
